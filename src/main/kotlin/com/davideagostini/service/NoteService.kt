@@ -7,7 +7,7 @@ import com.davideagostini.data.requests.CreateNoteRequest
 class NoteService(
     private val noteRepository: NoteRepository
 ) {
-    
+
     suspend fun createNote(request: CreateNoteRequest, userId: String): ValidationEvent {
         request.apply {
             if (title.isBlank() || description.isBlank()) {

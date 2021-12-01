@@ -1,8 +1,6 @@
 package com.davideagostini.data.repository.category
 
 import com.davideagostini.data.models.Category
-import com.davideagostini.data.models.User
-import com.davideagostini.data.responses.CategoryResponse
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.eq
 
@@ -11,7 +9,6 @@ class CategoryRepositoryImpl(
 ): CategoryRepository {
 
     private val categories = db.getCollection<Category>()
-    private val users = db.getCollection<User>()
 
     override suspend fun createCategory(category: Category): Boolean {
         val categoryExists = categories.findOneById(category.id) != null
@@ -30,15 +27,8 @@ class CategoryRepositoryImpl(
         return categories.findOneById(categoryId)
     }
 
-    override suspend fun getCategoryDetails(userId: String, categoryId: String): CategoryResponse? {
-        val category =  categories.findOneById(categoryId) ?: return null
-        val user = users.findOneById(category.userId) ?: return null
-        return CategoryResponse(
-            id = category.id,
-            userId = user.id,
-            title = category.title,
-            color = category.color
-        )
+    override suspend fun getCategoryDetails(userId: String, categoryId: String): Category? {
+        return categories.findOne(Category::id eq categoryId, Category::userId eq userId)
     }
 
     override suspend fun getCategoriesForOwner(ownUserId: String): List<Category> {

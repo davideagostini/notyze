@@ -39,15 +39,6 @@ fun Route.createCategory(categoryService: CategoryService) {
                         )
                     )
                 }
-                is CategoryService.ValidationEvent.UserNotFound -> {
-                    call.respond(
-                        HttpStatusCode.OK,
-                        BasicApiResponse<Unit>(
-                            successful = false,
-                            message = "User not found"
-                        )
-                    )
-                }
             }
         }
     }
@@ -77,7 +68,10 @@ fun Route.deleteCategory(categoryService: CategoryService) {
             }
             if (category.userId == call.userId) {
                 categoryService.deleteCategory(request.categoryId)
-                call.respond(HttpStatusCode.OK)
+                call.respond(HttpStatusCode.OK,
+                    BasicApiResponse<Unit>(
+                    successful = true
+                ))
             } else {
                 call.respond(HttpStatusCode.Unauthorized)
             }
@@ -92,16 +86,13 @@ fun Route.getCategoryDetails(categoryService: CategoryService) {
                 call.respond(HttpStatusCode.BadRequest)
                 return@get
             }
-            val post = categoryService.getCategoryDetails(call.userId, categoryId) ?: kotlin.run {
+            val category = categoryService.getCategoryDetails(call.userId, categoryId) ?: kotlin.run {
                 call.respond(HttpStatusCode.NotFound)
                 return@get
             }
             call.respond(
                 HttpStatusCode.OK,
-                BasicApiResponse(
-                    successful = true,
-                    data = post
-                )
+                category
             )
         }
     }

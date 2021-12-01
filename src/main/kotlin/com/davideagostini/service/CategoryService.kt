@@ -3,7 +3,6 @@ package com.davideagostini.service
 import com.davideagostini.data.models.Category
 import com.davideagostini.data.repository.category.CategoryRepository
 import com.davideagostini.data.requests.CreateCategoryRequest
-import com.davideagostini.data.responses.CategoryResponse
 
 class CategoryService(
     private val categoryRepository: CategoryRepository,
@@ -42,7 +41,7 @@ class CategoryService(
         return categoryRepository.getCategory(categoryId)
     }
 
-    suspend fun getCategoryDetails(ownUserId: String, categoryId: String): CategoryResponse? {
+    suspend fun getCategoryDetails(ownUserId: String, categoryId: String): Category? {
         return categoryRepository.getCategoryDetails(ownUserId, categoryId)
     }
 
@@ -56,7 +55,6 @@ class CategoryService(
 
     sealed class ValidationEvent {
         object ErrorFieldEmpty: ValidationEvent()
-        object UserNotFound: ValidationEvent()
         object Success: ValidationEvent()
     }
 }
