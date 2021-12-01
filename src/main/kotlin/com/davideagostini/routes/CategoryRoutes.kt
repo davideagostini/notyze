@@ -13,9 +13,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import userId
 
-fun Route.createCategory(
-    categoryService: CategoryService
-) {
+fun Route.createCategory(categoryService: CategoryService) {
     authenticate {
         post("/api/category/create") {
             val request = call.receiveOrNull<CreateCategoryRequest>() ?: kotlin.run {
@@ -55,9 +53,7 @@ fun Route.createCategory(
     }
 }
 
-fun Route.getCategoriesForOwner(
-    categoryService: CategoryService
-) {
+fun Route.getCategoriesForOwner(categoryService: CategoryService) {
     authenticate {
         get("/api/category/all") {
             val categories = categoryService.getCategoriesForOwner(call.userId)
@@ -67,9 +63,7 @@ fun Route.getCategoriesForOwner(
 }
 
 
-fun Route.deleteCategory(
-    categoryService: CategoryService
-) {
+fun Route.deleteCategory(categoryService: CategoryService) {
     authenticate{
         delete("/api/category/delete") {
             val request = call.receiveOrNull<DeleteCategoryRequest>() ?: kotlin.run {
