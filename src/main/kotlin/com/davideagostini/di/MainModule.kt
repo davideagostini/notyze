@@ -27,7 +27,7 @@ val mainModule = module {
 
 
     single { UserService(get()) }
-    single { CategoryService(get(), get()) }
+    single { CategoryService(get()) }
 
     single { Gson() }
 }
