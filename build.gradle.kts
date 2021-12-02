@@ -3,6 +3,7 @@ val kotlin_version: String by project
 val logback_version: String by project
 val koin_version: String by project
 val kmongo_version: String by project
+val serializer_version: String by project
 
 plugins {
     application
@@ -29,6 +30,9 @@ dependencies {
     implementation("io.ktor:ktor-server-sessions:$ktor_version")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
+
+    // Serializer
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializer_version")
 
     // KMongo
     implementation("org.litote.kmongo:kmongo:$kmongo_version")

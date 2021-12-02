@@ -19,8 +19,9 @@ class CategoryRepositoryImpl(
         }
     }
 
-    override suspend fun deleteCategory(categoryId: String) {
-        categories.deleteOneById(categoryId)
+    override suspend fun deleteCategory(categoryId: String): Boolean {
+        val deletedCount = categories.deleteOneById(categoryId).deletedCount
+        return deletedCount > 0
     }
 
     override suspend fun getCategory(categoryId: String): Category? {

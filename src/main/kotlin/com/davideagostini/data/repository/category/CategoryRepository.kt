@@ -6,7 +6,7 @@ interface CategoryRepository {
 
     suspend fun createCategory(category: Category): Boolean
 
-    suspend fun deleteCategory(categoryId: String)
+    suspend fun deleteCategory(categoryId: String): Boolean
 
     suspend fun getCategory(categoryId: String): Category?
 

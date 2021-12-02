@@ -1,9 +1,8 @@
 package com.davideagostini.routes
 
 import com.davideagostini.data.requests.CreateCategoryRequest
-import com.davideagostini.data.requests.DeleteCategoryRequest
 import com.davideagostini.data.responses.BasicApiResponse
-import com.davideagostini.data.util.ApiResponseMessages.FIELDS_BLANK
+import com.davideagostini.data.util.ApiResponseMessages.INTERNAL_SERVER_ERROR
 import com.davideagostini.service.CategoryService
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -20,25 +19,24 @@ fun Route.createCategory(categoryService: CategoryService) {
                 call.respond(HttpStatusCode.BadRequest)
                 return@post
             }
+
             val userId = call.userId
-            when(categoryService.createCategory(request, userId)) {
-                is CategoryService.ValidationEvent.ErrorFieldEmpty ->  {
-                    call.respond(
-                        HttpStatusCode.OK,
-                        BasicApiResponse<Unit>(
-                            successful = false,
-                            message = FIELDS_BLANK
-                        )
+            val createCategoryAcknowledged = categoryService.createCategory(request, userId)
+            if (createCategoryAcknowledged) {
+                call.respond(
+                    HttpStatusCode.OK,
+                    BasicApiResponse<Unit>(
+                        successful = true
                     )
-                }
-                is CategoryService.ValidationEvent.Success -> {
-                    call.respond(
-                        HttpStatusCode.OK,
-                        BasicApiResponse<Unit>(
-                            successful = true
-                        )
+                )
+            } else {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    BasicApiResponse<Unit>(
+                        successful = false,
+                        message = INTERNAL_SERVER_ERROR
                     )
-                }
+                )
             }
         }
     }
@@ -55,41 +53,57 @@ fun Route.getCategoriesForOwner(categoryService: CategoryService) {
 
 
 fun Route.deleteCategory(categoryService: CategoryService) {
-    authenticate{
-        delete("/api/category/delete") {
-            val request = call.receiveOrNull<DeleteCategoryRequest>() ?: kotlin.run {
+    authenticate {
+        delete("/api/category/delete/{categoryId}") {
+            val categoryId = call.parameters["categoryId"] ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@delete
             }
-            val category = categoryService.getCategory(request.categoryId)
+
+            val category = categoryService.getCategory(categoryId)
             if (category == null) {
-                call.respond(HttpStatusCode.NotFound)
+                call.respond(
+                    HttpStatusCode.NotFound,
+                    BasicApiResponse<Unit>(
+                        successful = false
+                    )
+                )
                 return@delete
             }
-            if (category.userId == call.userId) {
-                categoryService.deleteCategory(request.categoryId)
-                call.respond(HttpStatusCode.OK,
-                    BasicApiResponse<Unit>(
-                    successful = true
-                ))
-            } else {
+
+            if (category.userId != call.userId) {
                 call.respond(HttpStatusCode.Unauthorized)
+                return@delete
             }
+            categoryService.deleteCategory(categoryId)
+            call.respond(
+                HttpStatusCode.OK,
+                BasicApiResponse<Unit>(
+                    successful = true,
+                )
+            )
+
         }
     }
 }
 
 fun Route.getCategoryDetails(categoryService: CategoryService) {
     authenticate {
-        get("/api/category/details") {
+        get("/api/category/details/{categoryId}") {
             val categoryId = call.parameters["categoryId"] ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@get
             }
+
             val category = categoryService.getCategoryDetails(call.userId, categoryId) ?: kotlin.run {
                 call.respond(HttpStatusCode.NotFound)
                 return@get
             }
+            if (category.userId != call.userId) {
+                call.respond(HttpStatusCode.Unauthorized)
+                return@get
+            }
+
             call.respond(
                 HttpStatusCode.OK,
                 category
