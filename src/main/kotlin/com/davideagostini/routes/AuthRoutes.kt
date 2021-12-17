@@ -89,6 +89,7 @@ fun Route.loginUser(
             val expiresIn = 1000L * 60L * 60L * 24L * 365L
             val token = JWT.create()
                 .withClaim("userId", user.id)
+                .withClaim("email", user.email)
                 .withIssuer(jwtIssuer)
                 .withExpiresAt(Date(System.currentTimeMillis() + expiresIn))
                 .withAudience(jwtAudience)

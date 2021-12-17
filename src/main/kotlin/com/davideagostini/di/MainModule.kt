@@ -2,10 +2,13 @@ package com.davideagostini.di
 
 import com.davideagostini.data.repository.category.CategoryRepository
 import com.davideagostini.data.repository.category.CategoryRepositoryImpl
+import com.davideagostini.data.repository.note.NoteRepository
+import com.davideagostini.data.repository.note.NoteRepositoryImpl
 import com.davideagostini.data.repository.user.UserRepository
 import com.davideagostini.data.repository.user.UserRepositoryImpl
 import com.davideagostini.data.util.Constants
 import com.davideagostini.service.CategoryService
+import com.davideagostini.service.NoteService
 import com.davideagostini.service.UserService
 import com.google.gson.Gson
 import org.koin.dsl.module
@@ -24,10 +27,13 @@ val mainModule = module {
     single<CategoryRepository> {
         CategoryRepositoryImpl(get())
     }
-
+    single<NoteRepository> {
+        NoteRepositoryImpl(get())
+    }
 
     single { UserService(get()) }
     single { CategoryService(get()) }
+    single { NoteService(get()) }
 
     single { Gson() }
 }

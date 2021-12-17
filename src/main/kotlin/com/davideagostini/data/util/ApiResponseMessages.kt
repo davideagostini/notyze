@@ -7,5 +7,6 @@ object ApiResponseMessages {
     const val INVALID_CREDENTIALS = "Oops, that is not correct, please try again."
     const val FIELDS_BLANK = "The fields not be empty."
     const val INTERNAL_SERVER_ERROR = "Internal Server Error."
+    const val USER_ALREADY_OWNER = "This user is already owner of this note."
 
 }

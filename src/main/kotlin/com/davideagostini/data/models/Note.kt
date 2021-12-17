@@ -7,7 +7,6 @@ data class Note(
     val title: String,
     val description: String,
     val date: Long,
-    val userId: String,
     val collaborators: List<String> = listOf(),
     val categories: List<Category> = listOf(),
     @BsonId

@@ -2,6 +2,7 @@ package com.davideagostini.plugins
 
 import com.davideagostini.routes.*
 import com.davideagostini.service.CategoryService
+import com.davideagostini.service.NoteService
 import com.davideagostini.service.UserService
 import io.ktor.application.*
 import io.ktor.routing.*
@@ -11,6 +12,7 @@ fun Application.configureRouting() {
 
     val userService: UserService by inject()
     val categoryService: CategoryService by inject()
+    val noteService: NoteService by inject()
 
     val jwtIssuer = environment.config.property("jwt.domain").getString()
     val jwtAudience = environment.config.property("jwt.audience").getString()
@@ -31,5 +33,11 @@ fun Application.configureRouting() {
         deleteCategory(categoryService)
         getCategoryDetails(categoryService)
         getCategoriesForOwner(categoryService)
+
+        createNote(noteService)
+        deleteNote(noteService)
+        getNoteDetails(noteService)
+        getNotesForOwner(noteService)
+        addCollaboratorToNote(noteService)
     }
 }
